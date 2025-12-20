@@ -24,7 +24,7 @@ export default function CategoryHistogram({
               <div className="flex-1">
                 <div className="h-4 border border-black">
                   <div
-                    className="h-full border-r border-black"
+                    className="bg-blue-700 h-full "
                     style={{ width: `${pct}%` }}
                     title={`${r.adds} adds`}
                   />

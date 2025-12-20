@@ -26,37 +26,43 @@ export default async function Home() {
   }));
 
   return (
-    <main className="p-6 space-y-4">
-      <div className="max-w-xl border border-black p-4">
-        <div className="text-sm">Total users</div>
-        <div className="mt-2 text-4xl font-bold tabular-nums">{totalUsers}</div>
-      </div>
+    <main className="p-6 space-y-6">
+      {/* Stats cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="border border-black p-4">
+          <div className="text-sm">Total users</div>
+          <div className="mt-2 text-4xl font-bold tabular-nums">
+            {totalUsers}
+          </div>
+        </div>
 
-      <div className="max-w-xl border border-black p-4">
-        <div className="text-sm">Total Active users (in 24 hours)</div>
-        <div className="mt-2 text-4xl font-bold tabular-nums">
-          {totalActiveUsers}
+        <div className="border border-black p-4">
+          <div className="text-sm">Total Active users (in 24 hours)</div>
+          <div className="mt-2 text-4xl font-bold tabular-nums">
+            {totalActiveUsers}
+          </div>
+        </div>
+
+        <div className="border border-black p-4">
+          <div className="text-sm">Total Logged Out users (in 30 days)</div>
+          <div className="mt-2 text-4xl font-bold tabular-nums">
+            {totalLoggedOutUsers}
+          </div>
+        </div>
+
+        <div className="border border-black p-4">
+          <div className="text-sm">
+            Products added to cart (last 24 hours)
+          </div>
+          <div className="mt-2 text-4xl font-bold tabular-nums">
+            {totalProductsAddedToday}
+          </div>
         </div>
       </div>
 
-      <div className="max-w-xl border border-black p-4">
-        <div className="text-sm">Total Logged Out users (in 30 days)</div>
-        <div className="mt-2 text-4xl font-bold tabular-nums">
-          {totalLoggedOutUsers}
-        </div>
-      </div>
-
-      <div className="max-w-xl border border-black p-4">
-        <div className="text-sm">Products added to cart (last 24 hours)</div>
-        <div className="mt-2 text-4xl font-bold tabular-nums">
-          {totalProductsAddedToday}
-        </div>
-      </div>
-
-      <div className="max-w-2xl">
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AddBars points={points} />
-      </div>
-<div className="max-w-3xl">
         <CategoryHistogram rows={topCategories} />
       </div>
     </main>
