@@ -21,7 +21,6 @@ export const fetchTotalActiveUsers = async () => {
       WHERE last_login_at >= NOW() - INTERVAL '24 hours';
     `);
 
-    console.log(res.rows[0]?.total);
     return res.rows[0]?.total ?? 0;
   } catch (err: any) {
     console.log(err?.message ?? err);
@@ -37,10 +36,90 @@ export const fetchTotalLoggedOutUsers = async () => {
       WHERE last_logout_at >= NOW() - INTERVAL '30 days';
     `);
 
-    console.log(res.rows[0]?.total);
     return res.rows[0]?.total ?? 0;
   } catch (err: any) {
     console.log(err?.message ?? err);
     return 0;
+  }
+};
+
+export const fetchTotalProductsAddedToday = async() =>{
+  try{
+    const res = await pool.query(`
+      SELECT COUNT(*)::int AS total
+      FROM cart_metrics
+      WHERE added_at >= NOW() - INTERVAL '24 hours';
+    `);
+
+    return res.rows[0]?.total ?? 0;
+  }
+  catch(err){
+    console.log(err.message);
+  }
+}
+
+export const fetchTopProductsFromCart = async() => {
+  try{
+    const res = await pool.query(`
+      SELECT product, COUNT(*) as adds
+      FROM cart_metrics
+      WHERE added_at >= NOW() - INTERVAL '7 days'
+      GROUP BY product
+      GROUP BY adds DESC
+      LIMIT 10;
+    `);
+
+    console.log(res);
+  }
+  catch(err){
+    console.log(err.message);
+  }
+}
+
+export const fetchTopCategoriesFromCart = async () => {
+  try {
+    const res = await pool.query(`
+      SELECT category, COUNT(*)::int AS adds
+      FROM cart_metrics
+      WHERE added_at >= NOW() - INTERVAL '7 days'
+      GROUP BY category
+      ORDER BY adds DESC
+      LIMIT 10;
+    `);
+
+    return res.rows as { category: string; adds: number }[];
+  } catch (err: any) {
+    console.log(err?.message ?? err);
+    return [];
+  }
+};
+
+export const fetchAddsOverLast24Hours = async () => {
+  try {
+    const res = await pool.query(`
+      SELECT
+        hrs.hour AS hour,
+        COALESCE(COUNT(cm.*), 0)::int AS adds
+      FROM (
+        SELECT generate_series(
+          date_trunc('hour', now()) - interval '23 hours',
+          date_trunc('hour', now()),
+          interval '1 hour'
+        ) AS hour
+      ) hrs
+      LEFT JOIN cart_metrics cm
+        ON cm.added_at >= hrs.hour
+       AND cm.added_at <  hrs.hour + interval '1 hour'
+      GROUP BY 1
+      ORDER BY 1;
+    `);
+
+    return res.rows.map((r: any) => ({
+      hour: r.hour,   // Date
+      adds: r.adds,   // number
+    }));
+  } catch (err: any) {
+    console.log(err?.message ?? err);
+    return [];
   }
 };
