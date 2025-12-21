@@ -43,7 +43,7 @@ export default async function RootLayout({
                 >
                 </Suspense>
               </div>
-              <div className="flex w-full flex-col items-start justify-center sm:w-auto sm:flex-row sm:items-center sm:gap-2">
+              <div className="flex w-full flex-col items-start justify-start sm:w-auto sm:flex-row sm:items-center sm:gap-2">
                 <Link
                   prefetch={true}
                   href="/"
@@ -51,36 +51,6 @@ export default async function RootLayout({
                 >
                   NextFasterPostgres
                 </Link>
-                <div className="items flex w-full flex-row items-center justify-between gap-4 text-blue-700">
-                  <div className="mx-0 flex-grow sm:mx-auto sm:flex-grow-0">
-                  </div>
-                  <div className="flex flex-row justify-between space-x-4">
-                    <div className="relative">
-                      <Link
-                        prefetch={true}
-                        href="/order"
-                        className="text-lg text-accent1 hover:underline"
-                      >
-                        ORDER
-                      </Link>
-                    </div>
-                    <Link
-                      prefetch={true}
-                      href="/order-history"
-                      className="hidden text-lg text-accent1 hover:underline md:block"
-                    >
-                      ORDER HISTORY
-                    </Link>
-                    <Link
-                      prefetch={true}
-                      href="/order-history"
-                      aria-label="Order History"
-                      className="block text-lg text-accent1 hover:underline md:hidden"
-                    >
-                      <MenuIcon />
-                    </Link>
-                  </div>
-                </div>
               </div>
             </div>
           </header>
