@@ -123,3 +123,14 @@ export const fetchAddsOverLast24Hours = async () => {
     return [];
   }
 };
+
+export const fetchTopProductViews= async() => {
+  try{
+    const res = await pool.query(`SELECT product_slug, product_name, COUNT(*)::int AS views FROM product_view_events GROUP BY product_slug, product_name ORDER BY views DESC LIMIT 5 `);
+    
+    return res.rows;
+  }
+  catch(err){
+    console.log(err.message);
+  }
+}

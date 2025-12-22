@@ -4,6 +4,7 @@ import {
   fetchTotalLoggedOutUsers,
   fetchTotalProductsAddedToday,
   fetchAddsOverLast24Hours,
+  fetchTopProductViews,
   fetchTopCategoriesFromCart,
 } from "@/lib/queries";
 
@@ -15,6 +16,7 @@ export default async function Home() {
   const totalActiveUsers = await fetchTotalActiveUsers();
   const totalLoggedOutUsers = await fetchTotalLoggedOutUsers();
   const totalProductsAddedToday = await fetchTotalProductsAddedToday();
+  const totalProductViews = await fetchTopProductViews();
 
   const addsSeries = await fetchAddsOverLast24Hours();
 
@@ -64,6 +66,26 @@ export default async function Home() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AddBars points={points} />
         <CategoryHistogram rows={topCategories} />
+
+<div className="border border-black p-4">
+  <div className="text-sm mb-3">Top viewed products</div>
+
+  {(!totalProductViews || totalProductViews.length === 0) ? (
+    <div className="text-sm text-gray-600">No data yet.</div>
+  ) : (
+    <div className="space-y-2">
+      {totalProductViews.map((p: any, idx: number) => (
+        <div key={p.product_slug ?? `${p.product_name}-${idx}`} className="flex justify-between">
+          <div className="text-sm">
+            <span className="mr-2 font-semibold">{idx + 1}.</span>
+            {p.product_name}
+          </div>
+          <div className="text-sm tabular-nums font-bold">{p.views}</div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
       </div>
     </main>
   );
