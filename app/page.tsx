@@ -15,7 +15,7 @@ import AddBars from "@/components/AddBars";
 import CategoryHistogram from "@/components/CategoryHistogram";
 import ProductsPerCollectionPie from "@/components/ProductsPerCollectionPie";
 import DashboardCard from "@/components/DashboardCard";
-import TopViewedProductsChart from "@/components/TopViewedProductsChart";
+import RankedBarChart from "@/components/RankedBarChart";
 
 export default async function Home() {
   const totalUsers = await fetchTotalUsers();
@@ -30,6 +30,13 @@ export default async function Home() {
 
   const productsPerCollection = await fetchProductsPerCollection();
   const totalProductViews = await fetchTotalProductViews();
+
+
+const topProductLabels = topProductViews.map((r: any) => String(r.product_name));
+const topProductValues = topProductViews.map((r: any) => Number(r.views) || 0);
+
+const avgPriceLabels = avgCategoryPrices.map((r: any) => String(r.subcategory_slug));
+const avgPriceValues = avgCategoryPrices.map((r: any) => Number(r.avg_price) || 0);
 
   const points = addsSeries.map((d: any) => ({
     label: new Date(d.hour).toLocaleTimeString([], { hour: "2-digit" }),
@@ -66,29 +73,26 @@ export default async function Home() {
 
         <ProductsPerCollectionPie rows={productsPerCollection} topN={8} />
 
-        <TopViewedProductsChart rows={topProductViews} topN={10} />
+<RankedBarChart
+  labels={topProductLabels}
+  values={topProductValues}
+  title="Top viewed products"
+  subtitle="Top 10 by views"
+  topN={10}
+  valueLabel="Views"
+  decimals={0}
+/>
 
-        <div className="border border-black p-4">
-          <div className="text-sm mb-3">Average price by subcategory</div>
-
-          {!avgCategoryPrices || avgCategoryPrices.length === 0 ? (
-            <div className="text-sm text-gray-600">No data yet.</div>
-          ) : (
-            <div className="space-y-2">
-              {avgCategoryPrices.map((r: any, idx: number) => (
-                <div
-                  key={r.subcategory_slug ?? idx}
-                  className="flex justify-between"
-                >
-                  <div className="text-sm">{r.subcategory_slug}</div>
-                  <div className="text-sm tabular-nums font-bold">
-                    {Number(r.avg_price).toFixed(2)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+<RankedBarChart
+  labels={avgPriceLabels}
+  values={avgPriceValues}
+  title="Average price by subcategory"
+  subtitle="Top 10 by average price"
+  topN={10}
+  valueLabel="Avg Price"
+  valuePrefix="₹"
+  decimals={2}
+/>
       </div>
     </main>
   );
