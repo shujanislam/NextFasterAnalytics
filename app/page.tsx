@@ -9,6 +9,7 @@ import {
   fetchAverageCategoryProductPrice,
   fetchProductsPerCollection,
   fetchTotalProductViews,
+  fetchNewUsersMetrics
 } from "@/lib/queries";
 
 import AddBars from "@/components/AddBars";
@@ -32,11 +33,13 @@ export default async function Home() {
   const totalProductViews = await fetchTotalProductViews();
 
 
-const topProductLabels = topProductViews.map((r: any) => String(r.product_name));
-const topProductValues = topProductViews.map((r: any) => Number(r.views) || 0);
+  const topProductLabels = topProductViews.map((r: any) => String(r.product_name));
+  const topProductValues = topProductViews.map((r: any) => Number(r.views) || 0);
 
-const avgPriceLabels = avgCategoryPrices.map((r: any) => String(r.subcategory_slug));
-const avgPriceValues = avgCategoryPrices.map((r: any) => Number(r.avg_price) || 0);
+  const avgPriceLabels = avgCategoryPrices.map((r: any) => String(r.subcategory_slug));
+  const avgPriceValues = avgCategoryPrices.map((r: any) => Number(r.avg_price) || 0);
+
+  await fetchNewUsersMetrics();
 
   const points = addsSeries.map((d: any) => ({
     label: new Date(d.hour).toLocaleTimeString([], { hour: "2-digit" }),

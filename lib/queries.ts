@@ -3,9 +3,11 @@ import { unstable_cache } from "./unstable-cache";
 
 export const fetchTotalUsers = async() => {
   try{
-    const rows = await pool.query(`SELECT COUNT(id) FROM users_metrics`);
+    const rows = await pool.query(`SELECT COUNT(*) FROM users`);
    
     const count = rows.rows[0].count;
+
+    console.log(count)
 
     return count || 0;
   }
@@ -43,6 +45,22 @@ export const fetchTotalLoggedOutUsers = async () => {
     return 0;
   }
 };
+
+export const fetchNewUsersMetrics = async() => {
+  try{
+    const res = await pool.query(`
+      SELECT created_at::date AS day, COUNT(*) 
+      FROM users
+      GROUP BY 1
+      ORDER BY 1 DESC
+    `);
+
+    return res.rows;
+  }
+  catch(err: any){
+    console.log(err.message);
+  }
+}
 
 export const fetchTotalProductsAddedToday = async() =>{
   try{
