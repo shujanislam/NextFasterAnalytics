@@ -17,6 +17,7 @@ import CategoryHistogram from "@/components/CategoryHistogram";
 import ProductsPerCollectionPie from "@/components/ProductsPerCollectionPie";
 import DashboardCard from "@/components/DashboardCard";
 import RankedBarChart from "@/components/RankedBarChart";
+import NewUsersLineChart from "@/components/NewUsersLineChart";
 
 export default async function Home() {
   const totalUsers = await fetchTotalUsers();
@@ -39,7 +40,7 @@ export default async function Home() {
   const avgPriceLabels = avgCategoryPrices.map((r: any) => String(r.subcategory_slug));
   const avgPriceValues = avgCategoryPrices.map((r: any) => Number(r.avg_price) || 0);
 
-  await fetchNewUsersMetrics();
+  const newUsersByDay = await fetchNewUsersMetrics();
 
   const points = addsSeries.map((d: any) => ({
     label: new Date(d.hour).toLocaleTimeString([], { hour: "2-digit" }),
@@ -68,7 +69,7 @@ export default async function Home() {
           content={totalProductsAddedToday}
         />
       </div>
-
+<NewUsersLineChart rows={newUsersByDay ?? []} />
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AddBars points={points} />
