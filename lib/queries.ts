@@ -129,8 +129,6 @@ export const fetchTotalProductViews = async() => {
   try{
     const res = await pool.query(`SELECT COUNT(*)::int FROM product_view_events `);
 
-    console.log(res.rows);
-
     return res.rows[0].count;
   }
   catch(err: any){

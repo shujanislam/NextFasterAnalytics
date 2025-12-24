@@ -1,54 +1,45 @@
 "use client";
 
 import React, { useMemo } from "react";
+import { Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  type ChartOptions,
+} from "chart.js";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 type Row = {
   collection_name: string | null;
   product_count: number | string;
 };
 
-type Slice = {
-  label: string;
-  value: number;
-  color: string;
-};
-
-function stableColorFromString(s: string) {
-  // deterministic color per label (no randomness)
-  let hash = 0;
-  for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
-  const hue = hash % 360;
-  return `hsl(${hue} 70% 50%)`;
-}
-
-function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
-  const rad = ((angleDeg - 90) * Math.PI) / 180;
-  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
-}
-
-function describeArc(cx: number, cy: number, r: number, startAngle: number, endAngle: number) {
-  const start = polarToCartesian(cx, cy, r, endAngle);
-  const end = polarToCartesian(cx, cy, r, startAngle);
-  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-
-  return [
-    `M ${cx} ${cy}`,
-    `L ${start.x} ${start.y}`,
-    `A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
-    "Z",
-  ].join(" ");
-}
+// Visible-but-soft palette (muted, not neon, still clearly distinguishable)
+const SOFT_VISIBLE = [
+  "#7FA9D6", // soft blue
+  "#B69AD8", // soft purple
+  "#7FC7B2", // soft mint
+  "#E1B073", // soft amber
+  "#D88FA8", // soft rose
+  "#89B8C9", // soft teal
+  "#C6C27A", // soft olive
+  "#A7B2C8", // soft slate
+  "#D4A6A6", // dusty pink
+];
 
 export default function ProductsPerCollectionPie({
   rows,
   topN = 8,
-  size = 220,
+  showLegend = true,
 }: {
   rows: Row[];
   topN?: number;
-  size?: number;
+  showLegend?: boolean;
 }) {
-  const slices: Slice[] = useMemo(() => {
+  const { labels, values, colors, total } = useMemo(() => {
     const clean = (rows ?? [])
       .filter((r) => r?.collection_name)
       .map((r) => ({
@@ -58,96 +49,102 @@ export default function ProductsPerCollectionPie({
       .filter((r) => r.value > 0)
       .sort((a, b) => b.value - a.value);
 
-    if (clean.length === 0) return [];
+    if (clean.length === 0) {
+      return { labels: [], values: [], colors: [], total: 0 };
+    }
 
     const top = clean.slice(0, topN);
     const rest = clean.slice(topN);
     const othersValue = rest.reduce((sum, r) => sum + r.value, 0);
 
-    const final = othersValue > 0 ? [...top, { label: "Others", value: othersValue }] : top;
+    const final =
+      othersValue > 0 ? [...top, { label: "Others", value: othersValue }] : top;
 
-    return final.map((d) => ({
-      label: d.label,
-      value: d.value,
-      color: stableColorFromString(d.label),
-    }));
+    const labels = final.map((d) => d.label);
+    const values = final.map((d) => d.value);
+    const total = values.reduce((a, b) => a + b, 0);
+
+    // Give "Others" a neutral but still visible color
+    const colors = labels.map((lab, i) =>
+      lab === "Others" ? "#C9CED8" : SOFT_VISIBLE[i % SOFT_VISIBLE.length]
+    );
+
+    return { labels, values, colors, total };
   }, [rows, topN]);
 
-  const total = useMemo(() => slices.reduce((sum, s) => sum + s.value, 0), [slices]);
+  const data = useMemo(
+    () => ({
+      labels,
+      datasets: [
+        {
+          data: values,
+          backgroundColor: colors,
 
-  const radius = Math.floor(size / 2) - 8;
-  const cx = Math.floor(size / 2);
-  const cy = Math.floor(size / 2);
+          // ✅ smooth look: no borders between slices
+          borderWidth: 0,
 
-  let currentAngle = 0; // 0..360
+          // ✅ subtle hover
+          hoverOffset: 4,
+        },
+      ],
+    }),
+    [labels, values, colors]
+  );
+
+  const options: ChartOptions<"pie"> = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 220 },
+      plugins: {
+        legend: {
+          display: showLegend,
+          position: "right",
+          labels: {
+            boxWidth: 10,
+            boxHeight: 10,
+            padding: 10,
+            color: "rgba(0,0,0,0.55)",
+            font: { size: 11 },
+          },
+        },
+        tooltip: {
+          backgroundColor: "rgba(25,25,25,0.92)",
+          titleColor: "#fff",
+          bodyColor: "#fff",
+          displayColors: false,
+          padding: 10,
+          callbacks: {
+            label: (ctx) => {
+              const v = Number(ctx.parsed) || 0;
+              const pct = total ? ((v / total) * 100).toFixed(1) : "0.0";
+              return `${ctx.label}: ${v} (${pct}%)`;
+            },
+          },
+        },
+      },
+    }),
+    [total, showLegend]
+  );
 
   return (
-    <div className="border border-black p-4">
-      <div className="text-sm mb-3">Products per Collection (Pie)</div>
+    <div className="border border-black/60 p-4">
+      <div className="text-sm mb-1 text-black/80">Products per Collection</div>
+      <div className="text-xs text-black/45 mb-3">
+        Top {topN} collections + Others
+      </div>
 
-      {(!slices || slices.length === 0 || total === 0) ? (
+      {labels.length === 0 || total === 0 ? (
         <div className="text-sm text-gray-600">No data yet.</div>
       ) : (
-        <div className="flex flex-col lg:flex-row gap-4 items-start">
-          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="shrink-0">
-            {/* background ring (optional) */}
-            <circle cx={cx} cy={cy} r={radius} fill="transparent" stroke="black" strokeWidth="1" />
+        <div className="space-y-2">
+          <div className="text-xs text-black/50">
+            Total products counted:{" "}
+            <span className="font-semibold text-black/80">{total}</span>
+          </div>
 
-            {slices.map((s) => {
-              const angle = (s.value / total) * 360;
-              const start = currentAngle;
-              const end = currentAngle + angle;
-
-              // advance for next slice
-              currentAngle = end;
-
-              const d = describeArc(cx, cy, radius, start, end);
-
-              return (
-                <path
-                  key={s.label}
-                  d={d}
-                  fill={s.color}
-                  stroke="black"
-                  strokeWidth="1"
-                >
-                  <title>
-                    {s.label}: {s.value} ({((s.value / total) * 100).toFixed(1)}%)
-                  </title>
-                </path>
-              );
-            })}
-          </svg>
-
-          <div className="w-full">
-            <div className="text-xs text-gray-600 mb-2">
-              Total products counted: <span className="font-semibold text-black">{total}</span>
-            </div>
-
-            <div className="space-y-2">
-              {slices.map((s) => (
-                <div key={s.label} className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span
-                      className="inline-block h-3 w-3 border border-black"
-                      style={{ background: s.color }}
-                    />
-                    <div className="text-sm truncate">{s.label}</div>
-                  </div>
-
-                  <div className="text-sm tabular-nums font-bold">
-                    {s.value}{" "}
-                    <span className="text-gray-600 font-normal">
-                      ({((s.value / total) * 100).toFixed(1)}%)
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-3 text-xs text-gray-600">
-              Tip: hover slices to see tooltip (native SVG title).
-            </div>
+          <div className="relative w-full" style={{ height: 240 }}>
+            <Pie data={data} options={options} />
           </div>
         </div>
       )}
