@@ -5,11 +5,11 @@ const pool = new Pool({
   host: process.env.POSTGRES_HOST,
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
-  port: process.env.POSTGRES_PORT || 5432,
-  max: process.env.POSTGRES_MAX || 10,
-  idleTimeoutMillis: process.env.POSTGRES_IDLE_TIMEOUT || 30000,
-  connectionTimeoutMillis: process.env.POSTGRES_CONNECTION_TIMEOUT || 5000,
-  keepAlive: process.env.POSTGRES_KEEP_ALIVE || true,
+  port: process.env.POSTGRES_PORT ? Number(process.env.POSTGRES_PORT) : 5432,
+
+  max: process.env.POSTGRES_MAX ? Number(process.env.POSTGRES_MAX) : 10,
+  idleTimeoutMillis: process.env.POSTGRES_IDLE_TIMEOUT ? Number(process.env.POSTGRES_IDLE_TIMEOUT) : 30000,
+  connectionTimeoutMillis: process.env.POSTGRES_CONNECTION_TIMEOUT ? Number(process.env.POSTGRES_CONNECTION_TIMEOUT) : 5000,
 });
 
 pool.on("connect", () => {

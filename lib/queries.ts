@@ -1,4 +1,5 @@
-import pool from '@/db/index.ts';
+import pool from '@/db/index';
+import { unstable_cache } from "./unstable-cache";
 
 export const fetchTotalUsers = async() => {
   try{
@@ -8,7 +9,7 @@ export const fetchTotalUsers = async() => {
 
     return count || 0;
   }
-  catch(err){
+  catch(err: any){
     console.log(err.message);
   }
 }
@@ -53,7 +54,7 @@ export const fetchTotalProductsAddedToday = async() =>{
 
     return res.rows[0]?.total ?? 0;
   }
-  catch(err){
+  catch(err: any){
     console.log(err.message);
   }
 }
@@ -71,7 +72,7 @@ export const fetchTopProductsFromCart = async() => {
 
     console.log(res);
   }
-  catch(err){
+  catch(err: any){
     console.log(err.message);
   }
 }
@@ -130,7 +131,88 @@ export const fetchTopProductViews= async() => {
     
     return res.rows;
   }
-  catch(err){
+  catch(err: any){
     console.log(err.message);
+  }
+}
+
+// export const fetchAverageCategoryProductPrice = unstable_cache(
+//   async (offset: number) => {
+//     const res = await pool.query(
+//       `
+//       SELECT
+//         subcategory_slug,
+//         COUNT(*)::int AS n,
+//         (SUM(price) / COUNT(*)::numeric) AS avg_price
+//       FROM products
+//       GROUP BY subcategory_slug
+//       ORDER BY subcategory_slug
+//       LIMIT 10
+//       OFFSET $1
+//       `,
+//       [offset]
+//     );
+//
+//     return res.rows;
+//   },
+//   // ✅ key builder MUST include offset
+//   (offset: number) => ["avg-category-product-price", String(offset)],
+//   { revalidate: 60 * 10 }
+// );
+//
+
+export const fetchAverageCategoryProductPrice = async() => {
+  try{
+    const res = await pool.query(`SELECT subcategory_slug, COUNT(*)::int as n, (SUM(price) / COUNT(*)::numeric) as avg_price FROM products GROUP BY subcategory_slug ORDER BY subcategory_slug`);
+
+    return res.rows;
+  }
+  catch(err: any){
+    console.log(err.message);
+  }
+}
+
+export const fetchProductsPerCategory = async() => {
+  try{
+    const res = await pool.query(`
+      SELECT subcategory_slug,
+      COUNT(*)::int AS product_count 
+      FROM products
+      GROUP BY subcategory_slug
+      ORDER BY product_count DESC
+    `);
+
+    return res.rows as {subcategory_slug: string, product_count: number}[];
+  }
+  catch(err: any){
+    console.log(err.message);
+    return [];
+  }
+}
+
+export const fetchProductsPerCollection = async() => {
+  try{
+    const res = await pool.query(`
+      SELECT
+        col.name AS collection_name,
+        COUNT(p.*)::int AS product_count
+      FROM products p
+      JOIN subcategories s
+        ON s.slug = p.subcategory_slug
+      JOIN subcollections subc
+        ON subc.id = s.subcollection_id
+      JOIN categories c
+        ON c.slug = subc.category_slug
+      JOIN collections col
+        ON col.id = c.collection_id
+      GROUP BY col.name
+      ORDER BY product_count DESC;
+    `);
+
+    return res.rows as { collection_name: string, product_count: number }[];
+  }
+  catch(err: any){
+    console.log(err.message);
+    return [];
   }
 }

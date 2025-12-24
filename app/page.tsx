@@ -6,10 +6,15 @@ import {
   fetchAddsOverLast24Hours,
   fetchTopProductViews,
   fetchTopCategoriesFromCart,
+  fetchAverageCategoryProductPrice,
+  fetchProductsPerCategory,
+  fetchProductsPerCollection
 } from "@/lib/queries";
 
 import AddBars from "@/components/AddBars";
 import CategoryHistogram from "@/components/CategoryHistogram";
+import ProductsPerCategoryPie from "@/components/ProductsPerCategoryPie";
+import ProductsPerCollectionPie from "@/components/ProductsPerCollectionPie";
 
 export default async function Home() {
   const totalUsers = await fetchTotalUsers();
@@ -17,10 +22,14 @@ export default async function Home() {
   const totalLoggedOutUsers = await fetchTotalLoggedOutUsers();
   const totalProductsAddedToday = await fetchTotalProductsAddedToday();
   const totalProductViews = await fetchTopProductViews();
+  const avgCategoryPrices = await fetchAverageCategoryProductPrice();
 
   const addsSeries = await fetchAddsOverLast24Hours();
 
   const topCategories = await fetchTopCategoriesFromCart();
+  
+  const productsPerCategory = await fetchProductsPerCategory();
+  const productsPerCollection = await fetchProductsPerCollection();
   
   const points = addsSeries.map((d: any) => ({
     label: new Date(d.hour).toLocaleTimeString([], { hour: "2-digit" }),
@@ -86,7 +95,29 @@ export default async function Home() {
     </div>
   )}
 </div>
+
+<div className="border border-black p-4">
+  <div className="text-sm mb-3">Average price by subcategory</div>
+
+  {(!avgCategoryPrices || avgCategoryPrices.length === 0) ? (
+    <div className="text-sm text-gray-600">No data yet.</div>
+  ) : (
+    <div className="space-y-2">
+      {avgCategoryPrices.map((r: any, idx: number) => (
+        <div key={r.subcategory_slug ?? idx} className="flex justify-between">
+          <div className="text-sm">{r.subcategory_slug}</div>
+          <div className="text-sm tabular-nums font-bold">
+            {Number(r.avg_price).toFixed(2)}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
       </div>
+
+<ProductsPerCategoryPie rows={productsPerCategory} topN={2000} />
+<ProductsPerCollectionPie rows={productsPerCollection} topN={8} />
     </main>
   );
 }
