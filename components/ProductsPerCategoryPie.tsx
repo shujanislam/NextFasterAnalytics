@@ -123,28 +123,6 @@ export default function ProductsPerCategoryPie({
             <div className="text-xs text-gray-600 mb-2">
               Total products counted: <span className="font-semibold text-black">{total}</span>
             </div>
-
-            <div className="space-y-2">
-              {slices.map((s) => (
-                <div key={s.label} className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span
-                      className="inline-block h-3 w-3 border border-black"
-                      style={{ background: s.color }}
-                    />
-                    <div className="text-sm truncate">{s.label}</div>
-                  </div>
-
-                  <div className="text-sm tabular-nums font-bold">
-                    {s.value}{" "}
-                    <span className="text-gray-600 font-normal">
-                      ({((s.value / total) * 100).toFixed(1)}%)
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
             <div className="mt-3 text-xs text-gray-600">
               Tip: hover slices to see tooltip (native SVG title).
             </div>

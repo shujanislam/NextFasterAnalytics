@@ -125,6 +125,19 @@ export const fetchAddsOverLast24Hours = async () => {
   }
 };
 
+export const fetchTotalProductViews = async() => {
+  try{
+    const res = await pool.query(`SELECT COUNT(*)::int FROM product_view_events `);
+
+    console.log(res.rows);
+
+    return res.rows[0].count;
+  }
+  catch(err: any){
+    console.log(err.message);
+  }
+}
+
 export const fetchTopProductViews= async() => {
   try{
     const res = await pool.query(`SELECT product_slug, product_name, COUNT(*)::int AS views FROM product_view_events GROUP BY product_slug, product_name ORDER BY views DESC LIMIT 5 `);
@@ -169,24 +182,6 @@ export const fetchAverageCategoryProductPrice = async() => {
   }
   catch(err: any){
     console.log(err.message);
-  }
-}
-
-export const fetchProductsPerCategory = async() => {
-  try{
-    const res = await pool.query(`
-      SELECT subcategory_slug,
-      COUNT(*)::int AS product_count 
-      FROM products
-      GROUP BY subcategory_slug
-      ORDER BY product_count DESC
-    `);
-
-    return res.rows as {subcategory_slug: string, product_count: number}[];
-  }
-  catch(err: any){
-    console.log(err.message);
-    return [];
   }
 }
 
