@@ -15,6 +15,7 @@ import AddBars from "@/components/AddBars";
 import CategoryHistogram from "@/components/CategoryHistogram";
 import ProductsPerCollectionPie from "@/components/ProductsPerCollectionPie";
 import DashboardCard from "@/components/DashboardCard";
+import TopViewedProductsChart from "@/components/TopViewedProductsChart";
 
 export default async function Home() {
   const totalUsers = await fetchTotalUsers();
@@ -65,30 +66,7 @@ export default async function Home() {
 
         <ProductsPerCollectionPie rows={productsPerCollection} topN={8} />
 
-        <div className="border border-black p-4">
-          <div className="text-sm mb-3">Top viewed products</div>
-
-          {!topProductViews || topProductViews.length === 0 ? (
-            <div className="text-sm text-gray-600">No data yet.</div>
-          ) : (
-            <div className="space-y-2">
-              {topProductViews.map((p: any, idx: number) => (
-                <div
-                  key={p.product_slug ?? `${p.product_name}-${idx}`}
-                  className="flex justify-between"
-                >
-                  <div className="text-sm">
-                    <span className="mr-2 font-semibold">{idx + 1}.</span>
-                    {p.product_name}
-                  </div>
-                  <div className="text-sm tabular-nums font-bold">
-                    {p.views}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <TopViewedProductsChart rows={topProductViews} topN={10} />
 
         <div className="border border-black p-4">
           <div className="text-sm mb-3">Average price by subcategory</div>
