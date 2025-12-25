@@ -12,6 +12,9 @@ Built with **Next.js (App Router)**, **TailwindCSS**, and **PostgreSQL**.
 - Data fetched server-side using Postgres queries
 - Cart additions tracking via `cart_metrics`
 - Product view events per session via `product_view_events`
+- Estimated cart revenue
+- Products per collection
+- Products added to cart
 
 ## Tech Stack
 
@@ -51,41 +54,27 @@ POSTGRES_KEEP_ALIVE=true
 pnpm dev
 ```
 
-### Database
-This project expects the following tables:
+### 3) Database Setup
 
-```sql
-CREATE TABLE users_metrics (
-  id BIGINT PRIMARY KEY,
-  username TEXT NOT NULL,
-  registered_at TIMESTAMPTZ NOT NULL,
-  last_login_at TIMESTAMPTZ,
-  last_logout_at TIMESTAMPTZ
-);
+All the required SQL commands are provided in the `data/` folder:
 
-```
+1. Navigate to the `data/` folder and unzip `data.zip`:
+   ```bash
+   cd data
+   unzip data.zip
+   ```
 
-```sql
-CREATE TABLE cart_metrics (
-  id BIGINT PRIMARY KEY,
-  added_at TIMESTAMPTZ NOT NULL,
-  product TEXT NOT NULL,
-  category TEXT,
-  device_type TEXT
-);
+2. Run the SQL file in PostgreSQL:
+   ```bash
+   psql -U your_user -d your_db
+   ```
+   
+   Then inside the psql prompt:
+   ```sql
+   \i data.sql
+   ```
 
-```
-
-```sql
-CREATE TABLE product_view_events (
-  id BIGINT PRIMARY KEY,
-  product_name TEXT NOT NULL,
-  product_slug TEXT NOT NULL,
-  viewed_at TIMESTAMPTZ NOT NULL,
-  session_id TEXT NOT NULL
-);
-
-```
+This will create all the required tables and populate them with sample data.
 
 ## Credits
 
