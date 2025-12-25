@@ -7,8 +7,6 @@ export const fetchTotalUsers = async() => {
    
     const count = rows.rows[0].count;
 
-    console.log(count)
-
     return count || 0;
   }
   catch(err: any){
@@ -225,5 +223,23 @@ export const fetchProductsPerCollection = async() => {
   catch(err: any){
     console.log(err.message);
     return [];
+  }
+}
+
+export const estimatedCartRevenue = async() => {
+  try{
+    const res = await pool.query(`
+      SELECT 
+        SUM(products.price)::numeric as estimated_cart_revenue
+      FROM cart_metrics 
+      JOIN products
+        ON products.name = cart_metrics.product
+        AND products.subcategory_slug = cart_metrics.category
+    `);
+
+    return res.rows[0].estimated_cart_revenue;
+  }
+  catch(err: any){
+    console.log(err.message);
   }
 }

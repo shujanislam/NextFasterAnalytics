@@ -9,7 +9,8 @@ import {
   fetchAverageCategoryProductPrice,
   fetchProductsPerCollection,
   fetchTotalProductViews,
-  fetchNewUsersMetrics
+  fetchNewUsersMetrics,
+  estimatedCartRevenue,
 } from "@/lib/queries";
 
 import AddBars from "@/components/AddBars";
@@ -33,6 +34,7 @@ export default async function Home() {
   const productsPerCollection = await fetchProductsPerCollection();
   const totalProductViews = await fetchTotalProductViews();
 
+  const cartRevenue = await estimatedCartRevenue();
 
   const topProductLabels = topProductViews.map((r: any) => String(r.product_name));
   const topProductValues = topProductViews.map((r: any) => Number(r.views) || 0);
@@ -67,6 +69,11 @@ export default async function Home() {
         <DashboardCard
           title="Products Added to cart (in 24 hours)"
           content={totalProductsAddedToday}
+        />
+
+        <DashboardCard
+          title="Estimated Cart Revenue"
+          content={cartRevenue}
         />
       </div>
 <NewUsersLineChart rows={newUsersByDay ?? []} />
