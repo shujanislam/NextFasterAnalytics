@@ -72,7 +72,7 @@ export default async function Home() {
         />
 
         <DashboardCard
-          title="Estimated Cart Revenue"
+          title="Estimated Cart Revenue (in $)"
           content={cartRevenue}
         />
       </div>

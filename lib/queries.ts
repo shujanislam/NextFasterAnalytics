@@ -14,7 +14,7 @@ export const fetchTotalUsers = unstable_cache(async() => {
   }
 },
   ["fetchTotalUsers"],
-  { revalidate: 60 * 60 }
+  { revalidate: 60 }
 );
 
 export const fetchTotalActiveUsers = unstable_cache(async () => {
@@ -32,7 +32,7 @@ export const fetchTotalActiveUsers = unstable_cache(async () => {
   }
 },
   ["fetchTotalActiveUsers"],
-  { revalidate: 60 * 60 }
+  { revalidate: 60 }
 );
 
 export const fetchTotalLoggedOutUsers = unstable_cache(async () => {
@@ -50,7 +50,7 @@ export const fetchTotalLoggedOutUsers = unstable_cache(async () => {
   }
 },
   ["fetchTotalLoggedOutUsers"],
-  { revalidate: 60 * 60}
+  { revalidate: 60}
 );
 
 export const fetchNewUsersMetrics = unstable_cache(async() => {
@@ -70,7 +70,7 @@ export const fetchNewUsersMetrics = unstable_cache(async() => {
   }
 },
   ["fetchNewUsersMetrics"],
-  { revalidate: 60 * 60 }
+  { revalidate: 60 }
 );
 
 export const fetchTotalProductsAddedToday = unstable_cache(async() =>{
@@ -89,7 +89,7 @@ export const fetchTotalProductsAddedToday = unstable_cache(async() =>{
   }
 },
   ["fetchTotalProductsAddedToday"],
-  { revalidate: 60 * 60 }
+  { revalidate: 60 }
 );
 
 export const fetchTopProductsFromCart = unstable_cache(async() => {
@@ -111,7 +111,7 @@ export const fetchTopProductsFromCart = unstable_cache(async() => {
   }
 },
   ["fetchTopProductsFromCart"],
-  { revalidate: 60 * 60 }
+  { revalidate: 60 }
 );
 
 export const fetchTopCategoriesFromCart = unstable_cache(async () => {
@@ -132,7 +132,7 @@ export const fetchTopCategoriesFromCart = unstable_cache(async () => {
   }
 },
   ["fetchTopCategoriesFromCart"],
-  { revalidate: 60 * 60 }
+  { revalidate: 60 }
 );
 
 export const fetchAddsOverLast24Hours = unstable_cache(async () => {
@@ -165,7 +165,7 @@ export const fetchAddsOverLast24Hours = unstable_cache(async () => {
   }
 },
   ["fetchAddsOverLast24Hours"],
-  { revalidate: 60 * 60 }
+  { revalidate: 60 }
 );
 
 export const fetchTotalProductViews = unstable_cache(async() => {
@@ -180,7 +180,7 @@ export const fetchTotalProductViews = unstable_cache(async() => {
   }
 },
   ["fetchTotalProductViews"],
-  { revalidate: 60 * 60 }
+  { revalidate: 60 }
 );
 
 export const fetchTopProductViews= unstable_cache(async() => {
@@ -195,7 +195,7 @@ export const fetchTopProductViews= unstable_cache(async() => {
   }
 },
   ["fetchTopProductViews"],
-  { revalidate: 60 * 60 * 24 }
+  { revalidate: 60  }
 );
 
 // export const fetchAverageCategoryProductPrice = unstable_cache(
@@ -263,7 +263,7 @@ export const fetchProductsPerCollection = unstable_cache(async() => {
   }
 },
   ["fetchProductsPerCollection"],
-  { revalidate: 60 * 60 * 24 }
+  { revalidate: 60 }
 );
 
 export const estimatedCartRevenue = unstable_cache(async() => {
@@ -286,5 +286,5 @@ export const estimatedCartRevenue = unstable_cache(async() => {
   }
 },
   ["estimatedCartRevenue"],
-  { revalidate: 60 * 60 }
+  { revalidate: 60 }
 );

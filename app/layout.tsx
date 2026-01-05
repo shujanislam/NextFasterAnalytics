@@ -71,7 +71,7 @@ export default async function RootLayout({
           <div className="text-center sm:text-right">
             By using this website, you agree to check out the{" "}
             <Link
-              href="https://github.com/ethanniser/NextFaster"
+              href="https://github.com/shujanislam/NextFasterAnalytics"
               className="font-bold text-accent1 hover:underline"
               target="_blank"
             >
