@@ -18,10 +18,19 @@ Built with **Next.js (App Router)**, **TailwindCSS**, and **PostgreSQL**.
 
 ## Tech Stack
 
-- Next.js (App Router)
-- TailwindCSS
-- PostgreSQL
-- `pg` (node-postgres)
+
+## Caching Strategy
+
+This project uses **`unstable_cache`** from Next.js to optimize database query performance:
+
+### Why `unstable_cache`?
+
+- **Performance**: Caches expensive database queries to reduce response times
+- **Deduplication**: Wrapped with React's `cache()` to prevent duplicate requests during a single render
+- **Automatic Revalidation**: Configured with time-based revalidation to keep data fresh
+- **Server-Side**: Works seamlessly with Next.js App Router's server components
+
+The custom wrapper in `lib/unstable-cache.ts` combines Next.js's `unstable_cache` with React's `cache` to provide both request-level deduplication and time-based cache revalidation, ensuring optimal performance without sacrificing data freshness.
 
 ## Getting Started
 
@@ -77,6 +86,14 @@ All the required SQL commands are provided in the `data/` folder:
 This will create all the required tables and populate them with sample data.
 
 ## Credits
+
+## Screenshots
+
+### Analytics Dashboard
+
+![Dashboard Screenshot 1](docs/img_1.png)
+
+![Dashboard Screenshot 2](docs/img_2.png)
 
 Based on **NextFaster** by:
 - [@ethanniser](https://x.com/ethanniser)
