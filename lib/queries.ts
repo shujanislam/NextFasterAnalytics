@@ -57,6 +57,7 @@ export const fetchNewUsersMetrics = async() => {
   }
   catch(err: any){
     console.log(err.message);
+    return [];
   }
 }
 
@@ -72,6 +73,7 @@ export const fetchTotalProductsAddedToday = async() =>{
   }
   catch(err: any){
     console.log(err.message);
+    return 0;
   }
 }
 
@@ -87,6 +89,7 @@ export const fetchTopProductsFromCart = async() => {
     `);
 
     console.log(res);
+    return res;
   }
   catch(err: any){
     console.log(err.message);
@@ -149,6 +152,7 @@ export const fetchTotalProductViews = async() => {
   }
   catch(err: any){
     console.log(err.message);
+    return [];
   }
 }
 
@@ -160,6 +164,7 @@ export const fetchTopProductViews= async() => {
   }
   catch(err: any){
     console.log(err.message);
+    return [];
   }
 }
 
@@ -196,6 +201,8 @@ export const fetchAverageCategoryProductPrice = async() => {
   }
   catch(err: any){
     console.log(err.message);
+
+    return [];
   }
 }
 
@@ -241,5 +248,7 @@ export const estimatedCartRevenue = async() => {
   }
   catch(err: any){
     console.log(err.message);
+
+    return [];
   }
 }
