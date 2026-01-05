@@ -56,11 +56,11 @@ export default async function Home() {
         <DashboardCard title="Total users" content={totalUsers} />
         <DashboardCard
           title="Total Active users (in 24 hours)"
-          content="67038"
+          content={totalActiveUsers}
         />
         <DashboardCard
           title="Total Logged Out users (in 30 days)"
-          content="892"
+          content={totalLoggedOutUsers}
         />
         <DashboardCard
           title="Total Product Views (in 30 days)"
@@ -68,7 +68,7 @@ export default async function Home() {
         />
         <DashboardCard
           title="Products Added to cart (in 24 hours)"
-          content="1782"
+          content={totalProductsAddedToday}
         />
 
         <DashboardCard
