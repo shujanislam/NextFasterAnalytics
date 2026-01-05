@@ -223,7 +223,7 @@ export const fetchTopProductViews= unstable_cache(async() => {
 // );
 //
 
-export const fetchAverageCategoryProductPrice = unstable_cache(async() => {
+export const fetchAverageCategoryProductPrice = async() => {
   try{
     const res = await pool.query(`SELECT subcategory_slug, COUNT(*)::int as n, (SUM(price) / COUNT(*)::numeric) as avg_price FROM products GROUP BY subcategory_slug ORDER BY subcategory_slug`);
 
@@ -234,10 +234,7 @@ export const fetchAverageCategoryProductPrice = unstable_cache(async() => {
 
     return [];
   }
-},
-  ["fetchAverageCategoryProductPrice"],
-  { revalidate: 60 * 60 }
-);
+};
 
 export const fetchProductsPerCollection = unstable_cache(async() => {
   try{
