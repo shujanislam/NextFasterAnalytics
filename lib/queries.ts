@@ -35,7 +35,7 @@ export const fetchTotalActiveUsers = unstable_cache(async () => {
   { revalidate: 60 * 60 }
 );
 
-export const fetchTotalLoggedOutUsers = async () => {
+export const fetchTotalLoggedOutUsers = unstable_cache(async () => {
   try {
     const res = await pool.query(`
       SELECT COUNT(*)::int AS total
@@ -48,9 +48,12 @@ export const fetchTotalLoggedOutUsers = async () => {
     console.log(err?.message ?? err);
     return 0;
   }
-};
+},
+  ["fetchTotalLoggedOutUsers"],
+  { revalidate: 60 * 60}
+);
 
-export const fetchNewUsersMetrics = async() => {
+export const fetchNewUsersMetrics = unstable_cache(async() => {
   try{
     const res = await pool.query(`
       SELECT created_at::date AS day, COUNT(*) 
@@ -65,9 +68,12 @@ export const fetchNewUsersMetrics = async() => {
     console.log(err.message);
     return [];
   }
-}
+},
+  ["fetchNewUsersMetrics"],
+  { revalidate: 60 * 60 }
+);
 
-export const fetchTotalProductsAddedToday = async() =>{
+export const fetchTotalProductsAddedToday = unstable_cache(async() =>{
   try{
     const res = await pool.query(`
       SELECT COUNT(*)::int AS total
@@ -81,9 +87,12 @@ export const fetchTotalProductsAddedToday = async() =>{
     console.log(err.message);
     return 0;
   }
-}
+},
+  ["fetchTotalProductsAddedToday"],
+  { revalidate: 60 * 60 }
+);
 
-export const fetchTopProductsFromCart = async() => {
+export const fetchTopProductsFromCart = unstable_cache(async() => {
   try{
     const res = await pool.query(`
       SELECT product, COUNT(*) as adds
@@ -100,9 +109,12 @@ export const fetchTopProductsFromCart = async() => {
   catch(err: any){
     console.log(err.message);
   }
-}
+},
+  ["fetchTopProductsFromCart"],
+  { revalidate: 60 * 60 }
+);
 
-export const fetchTopCategoriesFromCart = async () => {
+export const fetchTopCategoriesFromCart = unstable_cache(async () => {
   try {
     const res = await pool.query(`
       SELECT category, COUNT(*)::int AS adds
@@ -118,9 +130,12 @@ export const fetchTopCategoriesFromCart = async () => {
     console.log(err?.message ?? err);
     return [];
   }
-};
+},
+  ["fetchTopCategoriesFromCart"],
+  { revalidate: 60 * 60 }
+);
 
-export const fetchAddsOverLast24Hours = async () => {
+export const fetchAddsOverLast24Hours = unstable_cache(async () => {
   try {
     const res = await pool.query(`
       SELECT
@@ -148,9 +163,12 @@ export const fetchAddsOverLast24Hours = async () => {
     console.log(err?.message ?? err);
     return [];
   }
-};
+},
+  ["fetchAddsOverLast24Hours"],
+  { revalidate: 60 * 60 }
+);
 
-export const fetchTotalProductViews = async() => {
+export const fetchTotalProductViews = unstable_cache(async() => {
   try{
     const res = await pool.query(`SELECT COUNT(*)::int FROM product_view_events `);
 
@@ -160,9 +178,12 @@ export const fetchTotalProductViews = async() => {
     console.log(err.message);
     return [];
   }
-}
+},
+  ["fetchTotalProductViews"],
+  { revalidate: 60 * 60 }
+);
 
-export const fetchTopProductViews= async() => {
+export const fetchTopProductViews= unstable_cache(async() => {
   try{
     const res = await pool.query(`SELECT product_slug, product_name, COUNT(*)::int AS views FROM product_view_events GROUP BY product_slug, product_name ORDER BY views DESC LIMIT 5 `);
     
@@ -172,7 +193,10 @@ export const fetchTopProductViews= async() => {
     console.log(err.message);
     return [];
   }
-}
+},
+  ["fetchTopProductViews"],
+  { revalidate: 60 * 60 }
+);
 
 // export const fetchAverageCategoryProductPrice = unstable_cache(
 //   async (offset: number) => {
@@ -199,7 +223,7 @@ export const fetchTopProductViews= async() => {
 // );
 //
 
-export const fetchAverageCategoryProductPrice = async() => {
+export const fetchAverageCategoryProductPrice = unstable_cache(async() => {
   try{
     const res = await pool.query(`SELECT subcategory_slug, COUNT(*)::int as n, (SUM(price) / COUNT(*)::numeric) as avg_price FROM products GROUP BY subcategory_slug ORDER BY subcategory_slug`);
 
@@ -210,9 +234,12 @@ export const fetchAverageCategoryProductPrice = async() => {
 
     return [];
   }
-}
+},
+  ["fetchAverageCategoryProductPrice"],
+  { revalidate: 60 * 60 }
+);
 
-export const fetchProductsPerCollection = async() => {
+export const fetchProductsPerCollection = unstable_cache(async() => {
   try{
     const res = await pool.query(`
       SELECT
@@ -237,9 +264,12 @@ export const fetchProductsPerCollection = async() => {
     console.log(err.message);
     return [];
   }
-}
+},
+  ["fetchProductsPerCollection"],
+  { revalidate: 60 * 60 }
+);
 
-export const estimatedCartRevenue = async() => {
+export const estimatedCartRevenue = unstable_cache(async() => {
   try{
     const res = await pool.query(`
       SELECT 
@@ -257,4 +287,7 @@ export const estimatedCartRevenue = async() => {
 
     return [];
   }
-}
+},
+  ["estimatedCartRevenue"],
+  { revalidate: 60 * 60 }
+);
