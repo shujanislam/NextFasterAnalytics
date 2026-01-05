@@ -1,10 +1,10 @@
 import pool from '@/db/index';
 import { unstable_cache } from "./unstable-cache";
 
-export const fetchTotalUsers = async() => {
+export const fetchTotalUsers = unstable_cache(async() => {
   try{
     const rows = await pool.query(`SELECT COUNT(*) FROM users`);
-   
+
     const count = rows.rows[0].count;
 
     return count || 0;
@@ -12,9 +12,12 @@ export const fetchTotalUsers = async() => {
   catch(err: any){
     console.log(err.message);
   }
-}
+},
+  ["fetchTotalUsers"],
+  { revalidate: 60 * 60 }
+);
 
-export const fetchTotalActiveUsers = async () => {
+export const fetchTotalActiveUsers = unstable_cache(async () => {
   try {
     const res = await pool.query(`
       SELECT COUNT(*)::int AS total
@@ -27,7 +30,10 @@ export const fetchTotalActiveUsers = async () => {
     console.log(err?.message ?? err);
     return 0;
   }
-};
+},
+  ["fetchTotalActiveUsers"],
+  { revalidate: 60 * 60 }
+);
 
 export const fetchTotalLoggedOutUsers = async () => {
   try {

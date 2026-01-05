@@ -49,7 +49,7 @@ export default async function RootLayout({
                   href="/"
                   className="text-4xl font-bold text-accent1 text-blue-700"
                 >
-                  NextFasterPostgres
+                  NextFasterAnalytics
                 </Link>
               </div>
             </div>
