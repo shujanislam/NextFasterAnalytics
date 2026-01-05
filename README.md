@@ -85,8 +85,6 @@ All the required SQL commands are provided in the `data/` folder:
 
 This will create all the required tables and populate them with sample data.
 
-## Credits
-
 ## Screenshots
 
 ### Analytics Dashboard
@@ -94,6 +92,8 @@ This will create all the required tables and populate them with sample data.
 ![Dashboard Screenshot 1](docs/img_1.png)
 
 ![Dashboard Screenshot 2](docs/img_2.png)
+
+## Credits
 
 Based on **NextFaster** by:
 - [@ethanniser](https://x.com/ethanniser)
