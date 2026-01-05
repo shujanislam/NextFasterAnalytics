@@ -195,7 +195,7 @@ export const fetchTopProductViews= unstable_cache(async() => {
   }
 },
   ["fetchTopProductViews"],
-  { revalidate: 60 * 60 }
+  { revalidate: 60 * 60 * 24 }
 );
 
 // export const fetchAverageCategoryProductPrice = unstable_cache(
@@ -266,7 +266,7 @@ export const fetchProductsPerCollection = unstable_cache(async() => {
   }
 },
   ["fetchProductsPerCollection"],
-  { revalidate: 60 * 60 }
+  { revalidate: 60 * 60 * 24 }
 );
 
 export const estimatedCartRevenue = unstable_cache(async() => {
