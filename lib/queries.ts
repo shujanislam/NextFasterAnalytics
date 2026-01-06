@@ -288,3 +288,29 @@ export const estimatedCartRevenue = unstable_cache(async() => {
   ["estimatedCartRevenue"],
   { revalidate: 60 }
 );
+
+// average cart value
+
+export const fetchDeviceTypePercentage = unstable_cache(async() => {
+  try{
+    const totalCount = await pool.query(`SELECT COUNT(*)::int FROM product_view_events`);
+
+    const mobileView = await pool.query(`SELECT COUNT(*)::int FROM product_view_events WHERE device_type = 'mobile'`);
+    const tabletView = await pool.query(`SELECT COUNT(*)::int FROM product_view_events WHERE device_type = 'tablet'`);
+    const desktopView = await pool.query(`SELECT COUNT(*)::int FROM product_view_events WHERE device_type = 'desktop'`);
+
+    const mobilePercent = (mobileView.rows[0].count/totalCount.rows[0].count) * 100;
+    const tabletPercent = (tabletView.rows[0].count/totalCount.rows[0].count) * 100;
+    const desktopPercent = (desktopView.rows[0].count/totalCount.rows[0].count) * 100;
+
+    console.log(tabletPercent);
+
+    return { mobilePercent, tabletPercent, desktopPercent };
+  }
+  catch(err: any){
+    console.log(err.message);
+  }
+},
+  ["fetchDeviceTypePercentage"],
+  { revalidate: 60 }
+)

@@ -11,6 +11,7 @@ import {
   fetchTotalProductViews,
   fetchNewUsersMetrics,
   estimatedCartRevenue,
+  fetchDeviceTypePercentage,
 } from "@/lib/queries";
 
 import AddBars from "@/components/AddBars";
@@ -19,6 +20,8 @@ import ProductsPerCollectionPie from "@/components/ProductsPerCollectionPie";
 import DashboardCard from "@/components/DashboardCard";
 import RankedBarChart from "@/components/RankedBarChart";
 import NewUsersLineChart from "@/components/NewUsersLineChart";
+
+import DeviceTypePie from "@/components/DeviceTypePie";
 
 export default async function Home() {
   const totalUsers = await fetchTotalUsers();
@@ -43,6 +46,10 @@ export default async function Home() {
   const avgPriceValues = avgCategoryPrices.map((r: any) => Number(r.avg_price) || 0);
 
   const newUsersByDay = await fetchNewUsersMetrics();
+
+  await fetchDeviceTypePercentage(); 
+
+    const deviceTypePercentages = await fetchDeviceTypePercentage();
 
   const points = addsSeries.map((d: any) => ({
     label: new Date(d.hour).toLocaleTimeString([], { hour: "2-digit" }),
@@ -84,6 +91,8 @@ export default async function Home() {
 
         <ProductsPerCollectionPie rows={productsPerCollection} topN={8} />
 
+          <DeviceTypePie devicePercentages={deviceTypePercentages} />
+
 <RankedBarChart
   labels={topProductLabels}
   values={topProductValues}
@@ -101,7 +110,7 @@ export default async function Home() {
   subtitle="Top 10 by average price"
   topN={10}
   valueLabel="Avg Price"
-  valuePrefix="₹"
+  valuePrefix="$"
   decimals={2}
 />
       </div>
