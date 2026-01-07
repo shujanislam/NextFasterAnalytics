@@ -22,6 +22,7 @@ import RankedBarChart from "@/components/RankedBarChart";
 import NewUsersLineChart from "@/components/NewUsersLineChart";
 
 import DeviceTypePie from "@/components/DeviceTypePie";
+import Performance from '@/components/performance/performance';
 
 export default async function Home() {
   const totalUsers = await fetchTotalUsers();
@@ -47,9 +48,7 @@ export default async function Home() {
 
   const newUsersByDay = await fetchNewUsersMetrics();
 
-  await fetchDeviceTypePercentage(); 
-
-    const deviceTypePercentages = await fetchDeviceTypePercentage();
+  const deviceTypePercentages = (await fetchDeviceTypePercentage()) ?? { mobilePercent: 0, tabletPercent: 0, desktopPercent: 0};
 
   const points = addsSeries.map((d: any) => ({
     label: new Date(d.hour).toLocaleTimeString([], { hour: "2-digit" }),
@@ -59,6 +58,7 @@ export default async function Home() {
   return (
     <main className="p-6 space-y-6">
       {/* Stats cards */}
+      <Performance />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <DashboardCard title="Total users" content={totalUsers} />
         <DashboardCard
