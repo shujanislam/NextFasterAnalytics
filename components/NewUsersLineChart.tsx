@@ -117,7 +117,7 @@ export default function NewUsersLineChart({
   );
 
   return (
-    <div className="border border-black/60 p-4">
+    <div className="border border-black/60 p-4 mb-5">
       <div className="text-sm mb-1 text-black/80">{title}</div>
       <div className="text-xs text-black/45 mb-3">Users created per date</div>
 
