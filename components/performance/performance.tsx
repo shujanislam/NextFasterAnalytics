@@ -7,7 +7,7 @@ export default async function Performance() {
   return (
     <>
         <DashboardCard
-          title="Average API latency (in ms)"
+          title="Average API latency [Product View] (in ms)"
           content={api_latency_ms}
         />
     </>

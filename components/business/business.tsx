@@ -12,6 +12,7 @@ import {
   fetchNewUsersMetrics,
   estimatedCartRevenue,
   fetchDeviceTypePercentage,
+  productViewedInTimeInterval
 } from "@/lib/queries";
 
 import AddBars from "@/components/AddBars";
@@ -46,6 +47,8 @@ export default async function BusinessMetrics() {
   const avgPriceValues = avgCategoryPrices.map((r: any) => Number(r.avg_price) || 0);
 
   const newUsersByDay = await fetchNewUsersMetrics();
+
+  await productViewedInTimeInterval();
 
   const deviceTypePercentages = (await fetchDeviceTypePercentage()) ?? { mobilePercent: 0, tabletPercent: 0, desktopPercent: 0};
 

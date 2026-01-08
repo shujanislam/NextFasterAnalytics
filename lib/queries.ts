@@ -314,3 +314,25 @@ export const fetchDeviceTypePercentage = unstable_cache(async() => {
   ["fetchDeviceTypePercentage"],
   { revalidate: 60 }
 )
+
+export const productViewedInTimeInterval = unstable_cache(async() => {
+  try{
+    const res = await pool.query(`
+      SELECT
+        date_trunc('hour', viewed_at) AS hour_start,
+        COUNT(*) AS views_count
+      FROM product_view_events
+      WHERE viewed_at >= now() - interval '24 hours'
+      GROUP BY 1
+      ORDER BY 1;
+    `);
+
+    return res.rows;
+  }
+  catch(err: any){
+    console.log(err.message);
+  }
+},
+  ["productViewedInTimeInterval"],
+  { revalidate: 60 }
+)
