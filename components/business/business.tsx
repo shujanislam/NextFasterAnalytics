@@ -20,7 +20,7 @@ import CategoryHistogram from "@/components/CategoryHistogram";
 import ProductsPerCollectionPie from "@/components/ProductsPerCollectionPie";
 import DashboardCard from "@/components/DashboardCard";
 import RankedBarChart from "@/components/RankedBarChart";
-import NewUsersLineChart from "@/components/NewUsersLineChart";
+import LineChart from "@/components/LineChart";
 
 import DeviceTypePie from "@/components/DeviceTypePie";
 
@@ -48,7 +48,11 @@ export default async function BusinessMetrics() {
 
   const newUsersByDay = await fetchNewUsersMetrics();
 
-  await productViewedInTimeInterval();
+  const productViewTimeInterval = await productViewedInTimeInterval();
+  const productViewData = (productViewTimeInterval ?? []).map((row: any) => ({
+    day: row.hour_start ? new Date(row.hour_start).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "N/A",
+    count: row.views_count || 0,
+  }));
 
   const deviceTypePercentages = (await fetchDeviceTypePercentage()) ?? { mobilePercent: 0, tabletPercent: 0, desktopPercent: 0};
 
@@ -84,7 +88,22 @@ export default async function BusinessMetrics() {
           content={cartRevenue}
         />
       </div>
-<NewUsersLineChart rows={newUsersByDay ?? []} />
+      <LineChart 
+        rows={newUsersByDay ?? []} 
+        title="New users per day"
+        subtitle="Users created per date"
+        labelKey="day"
+        valueKey="count"
+        valueLabel="New users"
+      />
+      <LineChart 
+        rows={productViewData} 
+        title="Product views per hour (last 24 hours)"
+        subtitle="Hourly product view events"
+        labelKey="day"
+        valueKey="count"
+        valueLabel="Views"
+      />
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AddBars points={points} />

@@ -25,45 +25,47 @@ ChartJS.register(
 );
 
 type Row = {
-  day: string;          // from SQL: created_at::date => "2025-12-24"
-  count: number | string; // default column name from COUNT(*)
+  [key: string]: any;
 };
 
-export default function NewUsersLineChart({
+export default function LineChart({
   rows,
-  title = "New users per day",
+  title = "Chart",
+  subtitle = "Data over time",
+  labelKey = "label",
+  valueKey = "value",
+  valueLabel = "Value",
+  reverse = true,
 }: {
   rows: Row[];
   title?: string;
+  subtitle?: string;
+  labelKey?: string;
+  valueKey?: string;
+  valueLabel?: string;
+  reverse?: boolean;
 }) {
   const { labels, values } = useMemo(() => {
-    // rows come ordered DESC from SQL; reverse so chart moves left->right by date
-    const ordered = [...(rows ?? [])].reverse();
+    const ordered = reverse ? [...(rows ?? [])].reverse() : [...(rows ?? [])];
 
-    const labels = ordered.map((r: any) => String(r.day));
-    const values = ordered.map((r: any) => Number(r.count) || 0);
+    const labels = ordered.map((r: any) => String(r[labelKey] ?? "N/A"));
+    const values = ordered.map((r: any) => Number(r[valueKey]) || 0);
 
     return { labels, values };
-  }, [rows]);
+  }, [rows, labelKey, valueKey, reverse]);
 
   const data = useMemo(
     () => ({
       labels,
       datasets: [
         {
-          label: "New users",
+          label: valueLabel,
           data: values,
-
-          // smooth + minimal
-          tension: 0.45,          // ✅ curvy
+          tension: 0.45,
           borderWidth: 2,
           borderColor: "rgba(20,20,20,0.65)",
-
-          // subtle fill under the curve
           fill: true,
           backgroundColor: "rgba(20,20,20,0.08)",
-
-          // bullet points
           pointRadius: 3,
           pointHoverRadius: 6,
           pointBackgroundColor: "rgba(20,20,20,0.75)",
@@ -71,7 +73,7 @@ export default function NewUsersLineChart({
         },
       ],
     }),
-    [labels, values]
+    [labels, values, valueLabel]
   );
 
   const options: ChartOptions<"line"> = useMemo(
@@ -86,8 +88,8 @@ export default function NewUsersLineChart({
           backgroundColor: "rgba(20,20,20,0.92)",
           padding: 10,
           callbacks: {
-            title: (items) => `Date: ${items?.[0]?.label ?? ""}`,
-            label: (ctx) => `New users: ${Number(ctx.parsed.y || 0).toLocaleString()}`,
+            title: (items) => `${items?.[0]?.label ?? ""}`,
+            label: (ctx) => `${valueLabel}: ${Number(ctx.parsed.y || 0).toLocaleString()}`,
           },
         },
       },
@@ -113,13 +115,13 @@ export default function NewUsersLineChart({
         },
       },
     }),
-    []
+    [valueLabel]
   );
 
   return (
     <div className="border border-black/60 p-4 mb-5">
       <div className="text-sm mb-1 text-black/80">{title}</div>
-      <div className="text-xs text-black/45 mb-3">Users created per date</div>
+      <div className="text-xs text-black/45 mb-3">{subtitle}</div>
 
       {!rows || rows.length === 0 ? (
         <div className="text-sm text-gray-600">No data yet.</div>
