@@ -3,7 +3,14 @@ import { unstable_cache } from "../unstable-cache";
 
 export const fetchApiLatencyTime = unstable_cache(async() => {
   try{
-    const res = await pool.query(`SELECT AVG(api_latency_ms) AS avg_api_latency_ms FROM product_view_events WHERE api_latency_ms IS NOT NULL`);
+    const res = await pool.query(`
+      SELECT AVG(api_latency_ms) AS avg_api_latency_ms
+      FROM (
+        SELECT api_latency_ms FROM product_view_events WHERE api_latency_ms IS NOT NULL
+        UNION ALL
+        SELECT api_latency_ms FROM cart_metrics       WHERE api_latency_ms IS NOT NULL
+      ) t
+    `);
     
     const api_latency_ms = res.rows[0].avg_api_latency_ms;
 
