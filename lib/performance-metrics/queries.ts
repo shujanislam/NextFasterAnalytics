@@ -41,3 +41,17 @@ export const fetchErrorRate = unstable_cache(async() => {
   ["fetchErrorRate"],
   { revalidate: 60 }
 );
+
+export const fetchErrorLogs = unstable_cache(async() => {
+  try{
+    const res = await pool.query(`SELECT route, status FROM request_logs WHERE ok = 'f'`);
+
+    return res.rows;
+  }
+  catch(err: any){
+    console.log(err.message);
+  }
+},
+  ["fetchErrorLogs"],
+  { revalidate: 60 }
+)
