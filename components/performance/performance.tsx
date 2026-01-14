@@ -1,4 +1,4 @@
-import { fetchApiLatencyTime, fetchErrorRate, fetchErrorLogs } from '../../lib/performance-metrics/queries';
+import { fetchApiLatencyTime, fetchErrorRate, fetchErrorLogs, analyzeError } from '../../lib/performance-metrics/queries';
 
 import DashboardCard from "@/components/DashboardCard";
 import ErrorLogs from "@/components/ErrorLogs";
@@ -8,6 +8,8 @@ export default async function Performance() {
   const error_rate = await fetchErrorRate();
   
   const error_logs = await fetchErrorLogs();
+
+  const error_analyzed_text = await analyzeError();
 
   return (
     <>
@@ -22,6 +24,7 @@ export default async function Performance() {
         />
 
         <ErrorLogs logs={error_logs ?? []} topN={10} />
+        <p>{ error_analyzed_text }</p>
     </>
   );
 }
