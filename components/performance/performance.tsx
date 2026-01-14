@@ -2,6 +2,7 @@ import { fetchApiLatencyTime, fetchErrorRate, fetchErrorLogs, analyzeError } fro
 
 import DashboardCard from "@/components/DashboardCard";
 import ErrorLogs from "@/components/ErrorLogs";
+import ErrorAnalysisLink from "@/components/performance/ErrorAnalysisLink";
 
 export default async function Performance() {
   const api_latency_ms = await fetchApiLatencyTime();
@@ -9,7 +10,11 @@ export default async function Performance() {
   
   const error_logs = await fetchErrorLogs();
 
-  const error_analyzed_text = await analyzeError();
+  const analyzeErrorAction = async () => {
+    "use server";
+    const summary = await analyzeError();
+    return summary ?? "No analysis available.";
+  };
 
   return (
     <>
@@ -24,7 +29,8 @@ export default async function Performance() {
         />
 
         <ErrorLogs logs={error_logs ?? []} topN={10} />
-        <p>{ error_analyzed_text }</p>
+
+        <ErrorAnalysisLink analyzeAction={analyzeErrorAction} />
     </>
   );
 }

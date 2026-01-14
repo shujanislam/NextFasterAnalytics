@@ -1,5 +1,6 @@
 import pool from '@/db/index';
 import { unstable_cache } from "../unstable-cache";
+import { explainErrorLogs } from '@/model/model';
 
 export const fetchApiLatencyTime = unstable_cache(async() => {
   try{
@@ -55,3 +56,25 @@ export const fetchErrorLogs = unstable_cache(async() => {
   ["fetchErrorLogs"],
   { revalidate: 60 }
 )
+
+export const analyzeError = unstable_cache(async() => {
+  try{
+    const res = await pool.query(`SELECT route, status FROM request_logs WHERE ok = 'f'`);
+
+    const errorLogs = res.rows;
+
+    const serializedLogs = errorLogs
+      .map((log) => `status: ${log.status}, route: ${log.route}`)
+      .join("\n");
+
+    const explained_error = await explainErrorLogs(serializedLogs);
+    
+    return explained_error;
+  }
+  catch(err: any){
+    console.log(err.message);
+  }
+},
+  ["analyzeError"],
+  { revalidate: 60 }
+);
