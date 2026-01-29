@@ -3,12 +3,21 @@ import { fetchApiLatencyTime, fetchErrorRate, fetchErrorLogs, analyzeError, fetc
 import DashboardCard from "@/components/DashboardCard";
 import ErrorLogs from "@/components/ErrorLogs";
 import ErrorAnalysisLink from "@/components/performance/ErrorAnalysisLink";
+import SpiderMetric from "@/components/performance/SpiderMetric";
 
 export default async function Performance() {
   const api_latency_ms = await fetchApiLatencyTime();
   const error_rate = await fetchErrorRate();
-  
+
   const error_logs = await fetchErrorLogs();
+  const traffic = await fetchTraffic();
+
+  const trafficLabels = (traffic ?? []).map((row: any) =>
+    String(row.route ?? "N/A")
+  );
+  const trafficValues = (traffic ?? []).map((row: any) =>
+    Number(row.requests) || 0
+  );
 
   const analyzeErrorAction = async () => {
     "use server";
@@ -16,23 +25,30 @@ export default async function Performance() {
     return summary ?? "No analysis available.";
   };
 
-  await fetchTraffic();
-
   return (
     <>
-        <DashboardCard
-          title="Average API latency [Product View] (in ms)"
-          content={api_latency_ms}
-        />
+      <DashboardCard
+        title="Average API latency [Product View] (in ms)"
+        content={api_latency_ms}
+      />
 
-        <DashboardCard
-          title="Error Rate (in %)"
-          content={error_rate}
-        />
+      <DashboardCard
+        title="Error Rate (in %)"
+        content={error_rate}
+      />
 
-        <ErrorLogs logs={error_logs ?? []} topN={10} />
+      <SpiderMetric
+        labels={trafficLabels}
+        values={trafficValues}
+        title="Traffic by route"
+        subtitle="Relative request volume per route (top 8)"
+        valueLabel="Requests"
+        topN={8}
+      />
 
-        <ErrorAnalysisLink analyzeAction={analyzeErrorAction} />
+      <ErrorLogs logs={error_logs ?? []} topN={10} />
+
+      <ErrorAnalysisLink analyzeAction={analyzeErrorAction} />
     </>
   );
 }
