@@ -63,14 +63,14 @@ export const analyzeError = unstable_cache(async() => {
 
     const errorLogs = res.rows;
 
-    const serializedLogs = errorLogs
-      .map((log) => `status: ${log.status}, route: ${log.route}`)
-      .join("\n");
+		const serializedLogs = errorLogs
+			.map((log) => `status: ${log.status}, route: ${log.route}`)
+			.join("\n");
 
-    const explained_error = await explainErrorLogs(serializedLogs);
-    
-    return explained_error;
-  }
+		const explained_error = await explainErrorLogs(serializedLogs);
+
+		return explained_error;
+	}
   catch(err: any){
     console.log(err.message);
   }
