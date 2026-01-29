@@ -78,3 +78,17 @@ export const analyzeError = unstable_cache(async() => {
   ["analyzeError"],
   { revalidate: 60 }
 );
+
+export const fetchTraffic = unstable_cache(async() => {
+  try{
+    const res = await pool.query('SELECT route, COUNT(*) AS requests FROM request_logs GROUP BY route ORDER BY requests DESC');
+
+    return res.rows;
+  }
+  catch(err: any){
+    console.log(err.message);
+  }
+}, 
+  ["fetchTraffic"],
+  { revalidate: 60 },
+)
