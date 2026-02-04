@@ -12,7 +12,7 @@ export default async function Performance() {
   const error_logs = await fetchErrorLogs();
   const traffic = await fetchTraffic();
 
-  await fetchHydrationTime();
+  const hydration_time = await fetchHydrationTime();
 
   const trafficLabels = (traffic ?? []).map((row: any) =>
     String(row.route ?? "N/A")
@@ -37,6 +37,11 @@ export default async function Performance() {
       <DashboardCard
         title="Error Rate (in %)"
         content={error_rate}
+      />
+
+      <DashboardCard
+        title="Average Hydration Time (in ms)"
+        content={hydration_time}
       />
 
       <SpiderMetric
