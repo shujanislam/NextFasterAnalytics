@@ -92,3 +92,17 @@ export const fetchTraffic = unstable_cache(async() => {
   ["fetchTraffic"],
   { revalidate: 60 },
 )
+
+export const fetchHydrationTime = unstable_cache(async() => {
+  try{
+    const res = await pool.query(`SELECT AVG(hydration_time) FROM hydration_metrics`);
+
+    return res.rows[0].avg;
+  }
+  catch(err: any){
+    console.log(err.message);
+  }
+}, 
+  ["fetchHydrationTime"],
+  { revalidate: 60 }
+)

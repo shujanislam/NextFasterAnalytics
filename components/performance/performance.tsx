@@ -1,4 +1,4 @@
-import { fetchApiLatencyTime, fetchErrorRate, fetchErrorLogs, analyzeError, fetchTraffic } from '../../lib/performance-metrics/queries';
+import { fetchApiLatencyTime, fetchErrorRate, fetchErrorLogs, analyzeError, fetchTraffic, fetchHydrationTime } from '../../lib/performance-metrics/queries';
 
 import DashboardCard from "@/components/DashboardCard";
 import ErrorLogs from "@/components/ErrorLogs";
@@ -11,6 +11,8 @@ export default async function Performance() {
 
   const error_logs = await fetchErrorLogs();
   const traffic = await fetchTraffic();
+
+  await fetchHydrationTime();
 
   const trafficLabels = (traffic ?? []).map((row: any) =>
     String(row.route ?? "N/A")
