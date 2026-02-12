@@ -6,13 +6,7 @@ import ErrorAnalysisLink from "@/components/performance/ErrorAnalysisLink";
 import SpiderMetric from "@/components/performance/SpiderMetric";
 
 export default async function Performance() {
-  const api_latency_ms = await fetchApiLatencyTime();
-  const error_rate = await fetchErrorRate();
-
-  const error_logs = await fetchErrorLogs();
-  const traffic = await fetchTraffic();
-
-  const hydration_time = await fetchHydrationTime();
+  const [ api_latency_ms, error_rate, error_logs, traffic, hydration_time ] = await Promise.all([ fetchApiLatencyTime(), fetchErrorRate(), fetchErrorLogs(), fetchTraffic(), fetchHydrationTime() ]);
 
   const trafficLabels = (traffic ?? []).map((row: any) =>
     String(row.route ?? "N/A")
