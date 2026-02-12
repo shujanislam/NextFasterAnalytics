@@ -25,20 +25,31 @@ import LineChart from "@/components/LineChart";
 import DeviceTypePie from "@/components/DeviceTypePie";
 
 export default async function BusinessMetrics() {
-  const totalUsers = await fetchTotalUsers();
-  const totalActiveUsers = await fetchTotalActiveUsers();
-  const totalLoggedOutUsers = await fetchTotalLoggedOutUsers();
-  const totalProductsAddedToday = await fetchTotalProductsAddedToday();
-  const topProductViews = await fetchTopProductViews();
-  const avgCategoryPrices = await fetchAverageCategoryProductPrice();
-
-  const addsSeries = await fetchAddsOverLast24Hours();
-  const topCategories = await fetchTopCategoriesFromCart();
-
-  const productsPerCollection = await fetchProductsPerCollection();
-  const totalProductViews = await fetchTotalProductViews();
-
-  const cartRevenue = await estimatedCartRevenue();
+  const [
+    totalUsers,
+    totalActiveUsers,
+    totalLoggedOutUsers,
+    totalProductsAddedToday,
+    topProductViews,
+    avgCategoryPrices,
+    addsSeries,
+    topCategories,
+    productsPerCollection,
+    totalProductViews,
+    cartRevenue,
+  ] = await Promise.all([
+    fetchTotalUsers(),
+    fetchTotalActiveUsers(),
+    fetchTotalLoggedOutUsers(),
+    fetchTotalProductsAddedToday(),
+    fetchTopProductViews(),
+    fetchAverageCategoryProductPrice(),
+    fetchAddsOverLast24Hours(),
+    fetchTopCategoriesFromCart(),
+    fetchProductsPerCollection(),
+    fetchTotalProductViews(),
+    estimatedCartRevenue(),
+  ]);
 
   const topProductLabels = topProductViews.map((r: any) => String(r.product_name));
   const topProductValues = topProductViews.map((r: any) => Number(r.views) || 0);
